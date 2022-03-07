@@ -91,6 +91,12 @@ module Medup
         Dir.mkdir_p(assets_dir)
       end
 
+      images_dir = File.join(assets_dir, "/assets/images")
+      unless File.directory?(images_dir)
+        puts "Create directory #{images_dir}"
+        Dir.mkdir_p(images_dir)
+      end
+
       if File.exists?(filepath)
         return unless @update
         File.delete(filepath + ".old") if File.exists?(filepath + ".old")
@@ -110,6 +116,11 @@ module Medup
           if !iframe.nil?
             download_iframe(iframe.mediaResourceId)
           end
+        when 4
+          image = paragraph.metadata
+          if !image.nil?
+            download_picture(image.id)
+          end
         else
           # TODO: Record unknown assets
         end
@@ -119,6 +130,10 @@ module Medup
     def download_iframe(name : String)
       filename = Zaru.sanitize!(name)
       download_to_assets("https://medium.com/media/#{name}", filename + ".html")
+    end
+
+    def download_picture(image : String)
+      download_to_assets("https://cdn-images-1.medium.com/max/2000/#{image}", image + ".jpg")
     end
 
     def download_to_assets(src, filename)
