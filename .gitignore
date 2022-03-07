@@ -6,3 +6,4 @@ _output/
 tmp/
 lib/
 _output/
+.DS_Store
